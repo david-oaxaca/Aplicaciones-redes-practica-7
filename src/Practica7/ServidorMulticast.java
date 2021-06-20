@@ -47,7 +47,7 @@ public class ServidorMulticast extends Thread{
                 EnvioMensaje(aux, gpo);
             }
             
-            System.out.println("Mensaje enviado...");
+            //System.out.println("Mensaje enviado...");
             try{
                 Thread.sleep(1000);
             }catch(InterruptedException ie){}

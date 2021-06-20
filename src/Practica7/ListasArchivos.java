@@ -7,11 +7,12 @@ package Practica7;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 
 /**
  *
  * @author tdwda
  */
-public interface ListaArchivos extends Remote{
-    Listas busqueda(String archivo) throws RemoteException;
+public interface ListasArchivos extends Remote{
+    ArrayList <Lista_elem> busqueda(String archivo) throws RemoteException;
 }

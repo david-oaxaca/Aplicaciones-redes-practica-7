@@ -64,11 +64,11 @@ public class ClienteNodos extends Thread{
                     }
                     if(encontrado == 0 && !nuevo.getID().equals(this.ID)){
                         nodos_encontrados.add(nuevo);
-                        System.out.println("ID: " + nuevo.getID());
-                        System.out.println("Puerto de RMI: " + nuevo.getPuerto_RMI());
-                        System.out.println("Puerto de Flujo: " + nuevo.getPuerto_Flujo());
+                        //System.out.println("ID: " + nuevo.getID());
+                        //System.out.println("Puerto de RMI: " + nuevo.getPuerto_RMI());
+                        //System.out.println("Puerto de Flujo: " + nuevo.getPuerto_Flujo());
                         new ServidorMulticast(this.cl, this.RMI_RESGISTRY_PORT, this.FILE_SEND_PORT, this.ID, "Puertos").start();
-                        System.out.println("Mensaje recibido");
+                        //System.out.println("Mensaje recibido");
                     }
                     
                     

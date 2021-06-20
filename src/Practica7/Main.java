@@ -60,8 +60,8 @@ public class Main {
         
         Thread.sleep(1000);
         
-        //"C:\\Users\\tdwda\\OneDrive\\Documentos\\NetBeansProjects\\Practica7\\Archivos"
-        //Archivos
+        //Directorio: Archivos
+        //Archivo: temp
         
         System.out.println("Escriba el nombre del archivo que desea buscar entre los servidores: ");
         String archivo = sc.nextLine();
