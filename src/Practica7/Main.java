@@ -52,11 +52,11 @@ public class Main {
         new ServidorMulticast(socket, rmi_envio, flujo_envio, uniqueID, "Puertos").start();
         new ClienteNodos(socket, nodos_encontrados, rmi_envio, flujo_envio, uniqueID).start();
         
-        //System.out.println("Escriba el directorio donde se realizaran las peticiones de busqueda: ");
-        //String Dir_Busqueda = sc.nextLine();
+        System.out.println("Escriba el directorio donde se realizaran las peticiones de busqueda: ");
+        String Dir_Busqueda = sc.nextLine();
         System.out.println("Inicializando servidor RMI...");
         
-        new Server_RMI(rmi_envio).start();
+        new Server_RMI(rmi_envio, Dir_Busqueda).start();
         
         Thread.sleep(1000);
         
