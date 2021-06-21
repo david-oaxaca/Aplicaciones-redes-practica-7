@@ -131,6 +131,7 @@ public class Main {
             if(i == (indices.size() - 1)){
                 termino = (int) (allFiles.get(opc_sel).getTam() - 1);
             }
+            
             //Inicializamos hilos de Client_Flujo
             int puerto = Integer.parseInt(nodos_encontrados.get(indices.get(i)).getPuerto_Flujo());
             new Client_Flujo(raf, direcciones.get(indices.get(i)), puerto, inicio, termino).start();
