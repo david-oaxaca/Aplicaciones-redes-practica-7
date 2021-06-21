@@ -67,6 +67,7 @@ public class Main {
         
         Thread.sleep(1000);
         
+        new Server_Flujo(flujo_envio).start();
         //Directorio: Archivos
         //Archivo: temp
         
