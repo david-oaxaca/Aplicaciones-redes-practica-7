@@ -1,0 +1,600 @@
++++ng Systems Programming
+Temática: Programación en espacio de kernel "Device drivers" usandos sistemas embebidos
+
+Sistema embebido
+MMU (Unidad de utilización de memoria)
+Procesadores ARM + MMU -> Se puede instalar LINUX al sistema embebido
+Ejemos:
+	RASPBERRY PI
+	BEAGLE BONE
+	JETSON NANO ENVIDIA
+
+Tunel para conexiones remotas a la RASPBERRY (2 o 3 alumnos)
+	RASPBERRY PI 3 (Modelo B+)
+		Distribuidores directos (ARROW, DIGIKEY)
+
+Las tareas de los programas en espacio de kernel son individuales
+
+Las tareas para usar Hardware se harán en la raspberry (EQUIPOS DE 3 PERSONAS MÁXIMO)
+
+Temas:
+1. Introducción
+2. Introducción a la Programación del kernel
+3. Parámetros en módilos
+4. Hilos de kernel
+5. Parámetros call back
+6. Introducción a device drivers
+7. Números mayor y menor
+8. Creación de Archivos de dispositivo
+9. Operaciones de archivo
+10. Definición de operaciones de archivo
+11. Aritmética de punto fijo
+12. Formato Qn
+13. Manejo de Interrupciones (IRQ)
+14. Tasklets
+
+Evaluación:
+Practicas y proyectos: 100%
+
+Bibliografia:
+Kernel
+Robert Love
+
+Sistemas embebidos
+Es un sistema computacional conformado por hardware y software dedicado para una aplicación  (o funciones) muy específica (s) (ej. celular), puede ser un producto final o una parte (inscrustado) de un sistema más complejo el cual puede incluir partes mecánicas y electrónicas.
+
+Características:
+Funcionalidad dedicada: 
+	Ejecuta un solo programa repetidamente.
+	Ejecuta un conjuntos de programas para una aplicación específica.
+Restricciones:
+	Bajo costo
+	Bajo consumo
+	Pequeños
+	Rápidos
+Deben reaccionar continuamente a los cambios del entorno del sistema
+Los sistemas embebidos modernos contienen:
+	Hardware similar a una computadora: uP, memoria, elementos de e/s
+	Software de aplicación
+	Un sistema operativo de tiempo real (RTOS)
+	Un sistema operativo basado en linux
+
+Un GPS es un mini sistema embebido completo -> Coordenadas (Antena, satelite)
+
+LORA: Radio que transmite hasta kilometros de distancia, ocupados para ciudades (inteligentes) o invernaderos
+CAN: Red de comunicación del automóvil
+
+Los sistemas embebidos se aplican en:
+	Internet de las cosas
+	Redes de sensores
+	Cómputo móvil
+	Ciencia de datos
+
+Áreas
+	Microrredes de energía (Paneles solares)
+	Sistemas de tiempo real
+	Robótica
+	Inteligencia Artificial
+
+Tecnología de C.I.
+	Full-custom o VLSI:
+		Actualmente es posible integrar en un solo circuito todos los componentes de un sistema
+		Diseño de sistemas en un chip (SoC)
+	Semi-custom o ASIC: (Chip ya diseñado de aplicación específica)
+		Diseños a partir de librerías
+		Procesadores de propósito general (Hard-core)
+		Procesadores de propósito específicos (Cores)
+		Periféricos
+		Diseño de sistemas en un chip (SoC)
+	Diseño con Dispositivos Lógicos Programables (PLD):
+		SPLD, CPLD y FPGA
+		Es posible desarrollar un sistema en un FPGA
+			Hard-core
+			Soft-core
+				Usa una zona de logica reconfigurable
+				La otra zona se puede usar para incorporar perifericos, gpu's, modulos / sistemas de comunicación, entre otros. Al final se manda a fabricar el CI
+			Periféricos
+			Mega-funciones IP (ej. generador de código "quiero un contador de 16 bits..")
+		Diseño de Sistema en un Chip Programable (SoPC - System of Programing Chip)
+	Diseño con circuitos integrados independientes:
+		Es posible que diferentes etapas del sistema estén en diferentes circuitos integradeos
+		Microcontraladores
+		Procesadores Digitales de señales (DSP)
+		Controladores Digitales de Señales (DSC)
+
+Un microcontrelador, se considera Soc (sistema en un chip)
+
+¿Por qué los procesadores de los celulares son ARM y no Intel?
+	Por el consumo de energía
+	Intel saca Atom pero no le gano a los ARM, y los sistemas embebidos también usan ARM
+	Intel - Vende procesadores (Hard-Core) - Circuitos Integrados (CI) ya diseñados
+	ARM - Vende procesadores (Soft-Core) -
+	"Intel te da la pastilla, y Arm te da el código para que tu hagas la pastilla"
+
+Tecnología de C.I:: SoPC (System of Programing Chip)
+	FPGA's
+
+Señal pwm (o pmm?)
+
+Tecnología de procesadores
+	Procesadores de propósito general
+
+Tarjetas con SoC
+	BeagleBone
+	Intel Edison, antes Galileo
+		Muchos errores y poca documentación
+	RaspberryPi (3)
+	Jetson Nano de Nvidia
+	BananaPi (Versión China de Raspberry)
+	CHIP
+	Raspberry Pi 4
+
+Raspberry Pi (Family)
+-Raspberry Pi Pico (4 dolares, salio en 2021)
+-Raspberry Pi Zero (5 dolares, usa linux, alámbrico ethernet)
+-Raspberry Pi Zero W (Se le agrega bluetooh, inalambrico)
+-Raspberry Pi 1 Modelo A+
+-Raspberry Pi 1 Modelo B+
+-Raspberry Pi 2 Modelo B
+-Raspberry Pi 3 Modelo B
+-Raspberry Pi 3 Modelo B+
+	Procesador de 4 nucleos, Cortex  A53 de 64 bits a 1.4Ghz en el SoC BCM2837B0
+	LAN inalámbrica de doble banda, 2.4Ghz y 5Ghz, Bluetooth 4.2
+	1GB SDRAM
+	4 conectores USB, conector de 3¿40 terminales
+	Soporte de video, sonido y multimedia
+	Soporte para tarjeta Micro SD
+	Coprocesador multimedia de dos núcleos VideoCore IV (GPU, se puede programar para hacer procesamiento paralelo)
+-Raspberry Pi 3 Modelo A+
+-Raspberry Pi 4 Modelo B
+
+Arquitectura ARM
+El diseño del ARM comenzó en 1983 como un proyecto de desarrollo en la empresa Acorn Computers. Roger Wilson y Steve Furber
+Arquitctura RISC (de 32 bits)
+
+¿Qué necesito para comenzar a desarrollar sistemas embebidos en raspberry?
+Memoria micro SD de al menos 16 GB clase 10.
+Adaptador para conectar la memoria microSD a la PC.
+Descargar la imagen de RaspiOS
+Eliminador de 5V a 2.5A microUSB
+Cable HDMI
+Sistema Operativo Linux
+Teclado y Mouse
+Módulo FT232 para comunicación serial. 3 Jumpers Hembra - Hembra
+
+La interfaz SD del BCM283x soporta una velocidad de hasta 50Mhz en modo High Speed
+
+UHS-1
+Memoria de clase 10, soporta 10MB/s High Speed minimum serial data
+
+Ejemplos:
+
+
+03/03/2021 - 7 minutos restantes de primer sesión
+
+Kernel
+Kernel monolíticos
+Linux tiene un kernel monolítico. El sistema operativo de RaspIOS esta basado en debian de linux. Este sistema es usado en el Soc de Raspberry
+Una falla en un módulo puede afecta a los demás
+
+Microkernels
+La parte más escencial del kernel es la que se encuentra en modo kernel y todo lo demás en espacio de usuario ejecutandose como proceso, tiene una mayor modularidad en las funciones de un sistema operativo
+Una falla en un módulo no afecta a los demás
+
+	Minix en su versión 3 tiene un microkernel. Esta versión esta desarrollada para la arquitectura X86 y ARM. En el caso de ARM es usado en el SoC Beaglebone
+
+Elementos de Kernel de Linux
+Device drivers: Pedazos de código para acceder a un hardware
+
+INTRODUCCIÓN A LA PROGRAMACIÓN DEL KERNEL DE LINUX
+Actualmente, el rendimiento de los S.O. basados en kernel monolíticos es aún mayor que el de los microkernels, Linux se implementó y aún se implementa de acuerdo con este paradigma. 
+
+Módulos de kernel
+Es una sección de código o programa que se carga o descarga en el kernel dependiendo de que funcionalidad del kernel que queramos, sin necesidad de estar reiniciandolo, sin está capacidad se tendría que compilar todo el kernel para agregar los device drivers (agregarle funcionalidad nueva) al kernel.
+
+/*
+*  hello-1.c - Módulo de kernel simple
+*/
+#include <linux/module.h> /* Necesaria para todos los módulos */
+#include <linux/kernel.h> /* Necesaria para KERN_INFO */
+
+int init_module(void)
+{
+	printk(KERN_INFO "Hola mundo, Inicializando el modulo 1.\n");
+	/*
+	* Un valor de retorno diferente de 0 significa que
+	* init_module fallo; el modulo no se puede cargar
+	*/
+	return 0;
+}
+
+void cleanup_module(void)
+{
+	printkn(KERN_INFO "Terminando la ejecución del modulo 1.\n");
+}
+
+La función de inicialización init_module(), la cual es ejecutada cuando el módulo se retira del kernel con el programa "insmod"
+
+La función de finalización cleanup_module
+
+Compilando módulos de kernel: kbuild
+
+En la términal de linux hacer
+$ nano hello-1.o
+$ nano Makefile
+
+El archivo Makefile es el siguiente:
+obj -m += hello-1.o
+all:
+	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
+clean:
+	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
+
+kernel.org/doc/html/latest/kbuild/makefiles.html
+
+$ uname -r
+	te dice que versión de kernel tienes instalado
+-/ACSP$ ls -l /lib/modules/5.8.0-44gemeroc/build/
+
+si no esta el Kbuild, se debe instalar con cabecera
+
+Comandos para el manejo de módulos de kernel
+	insmod. Inserta módulos al kernel de Linux
+	rmmod. Remueve módulos del kernel de Linux
+	Ismod. Muestra los módulos cargados en el kernel de Linux. Se encuentran almacenados en /proc/modules
+	modinfo. Proporciona información
+
+Comandos:
+nano /var/log/syslog
+	Leer/editar archivos
+tail -f /var/log/syslog 
+	Muestra las ultimas 10 lineas del archivo de manera dinamica
+
+sudo insmod hello-1.ko
+lsmod
+lsmod | grep hello //filtra lsmod
+dmesg
+modinfo hello-1.ko
+sudo rmmod hello_1 //el que aparece en lsmod
+
+	sudo -s //superusuario?
+		insmod hello-1.ko
+	¿Problema de kernel_lookdown?
+		Módulo de protección para el kernel, una característica de seguridad que me restringe la capacidad para insertar un módulo de kernel
+	Solución:
+		Tecla de Hackeo Mágico (Sysrq)
+			Alt + Tecla de imprimir pantalla (Sysrq) + x //Desabilita el modo "kernel lockdown"
+		Otra forma, habilitar la tecla mágica SysRq con sudo
+			echo "1" > /proc/sys/kernel/sysrq
+		Escribir el código deseado en:	
+			echo "x" > /proc/sysrq-trigger
+
+
+init_module()
+cleanup_module() liberación de esos recursos
+
+Macros: Así le dices al kernel cuál es cada función si quieres ponerle otro nombre a la función
+#include <linux/init.h> /* Necesaria para las macros */
+module_init(funcion_inicio);
+module_exit(funcion_exit);
+Las funciones deben ser estáticas (static)
+
+1:27pm 10/03/2021
+
+Tipos de datos en parámetros
+1. byte, short, ushort, int, uint, long, ulong
+2. charp: es un apuntador a caractér
+3. bool: Toma los valores de 0/1, y/n, Y/N
+4. invbool: Toma los mismos valores de bool, solo que en sentido inverso. (N= true)
+Si quieres una estructura, u otro tipo de dato no estandar, necesitas un modulo de kernel más sofisticado (device driver de caracter o de bloque que permita la lectura de dichos datos)
+
+ls - l /sys/module/{name_module}/parameters/{name_param}
+	Muestra los permisos como read write execute
+sudo cat /sys/module/{name_module}/parameters/{name_param}
+	Muestra el valor en binario
+
+CAMBIAR EL VALOR DEL PARÁMETRO
+sudo -s
+	echo "7" > /sys/module/{name_module}/parameters/{name_param}
+sudo sh -c "echo "7" > /sys/module/{name_module}/parameters/{name_param}"
+
+sudo insmod param-1.ko irq=20 	// Cambio de valor de la variable desde el insmod?
+
+MODULE_PARM_DESC()
+
+man open
+gcc aplicacion.c -o aplicacion -Wall
+
+HILOS DE KERNEL
+Procesos estándar, son distintos a los hilos de aplicación y solo corren en espacio de kernel
+$ps -ef
+	Para poder ver los procesos en ejecución
+
+Funciones:
+	1. Crear un hilo de kernel
+	2. Iniciar un hilo de kernel
+	3. Detener un hilo de kernel
+	4. Otras opciones
+Incluso se puede decir que procesador ejecuta el hilo de kernel
+
+Crear un hilo de kernel
+<linux/ktherad.h> //Macro
+https://elixir.bootlin.com/linux/latest/source/kernel/kthread.c
+
+Planificación de un hilo de kernel
+Se debe asegurar que el hilo de kernel esta bloqueado cuando no se encuentre haciendo nada, de lo contrario, continuará en ejecución y consumiendo recursos.
+
+Algunas funciones para planificar el hilo de kernel son:
+#include <linux/kthread.h>
+	schedule()
+		Invoca el planificador de procesos
+#include <linux/delay.h>
+	ssleep()
+		Cantidad de retardo en segundos
+	msleep()
+		Cantidad de retardo en milisegundos
+	usleep()
+		Cantidad de retardo en microsegundos
+
+top
+	Muestra los procesos en ejecución de tiempo real
+ps -ef
+	Muestra los procesos
+pf -ef | grep kmihilo
+	Busca entre los procesos por el nombre
+ps -ef | wc 
+	World count
+	Muestra el número de procesos ejecutandose
+
+MACRO
+#include <linux/kthread.h>
+khread_run()
+({
+
+})
+
+VINCULAR UN HILO A UN CPU (PROCESADOR)
+kthread_bind(struct task_struct *p, unsigned int cpu)
+{
+	__kthread_bind(p , cpu, TASK_UNINTERUPTIBLE);
+}
+
+CÓMPUTO DE ALTO DESEMPEÑO (HCP)
+High performance Computing, aumentar el rendimiento computacional mediante un sistema de procesamiento
+
+	Paralelizable
+		Un proceso se puede devidir entre los procesadores ya que son independientes los datos que quiere calcular, crear un hilo por cada subproceso
+
+El Kernel no trabaja con número flotantes, usa un concepto llamado operaciones de punto fijo, además no existe el tipo de dato char, solo char apuntador, se usa como caden  y se compara con el carácter 0
+
+Paralelismo a nivel de datos: Con hilos, usando varios procesadores
+
+Fallos de cache, paralelismo de forma alternada de datos tiene buen desempeño con pequeños saltos, no deben ser saltos muy grandes
+
+RASPBERRY
+	Los periféricos de un sistema embebido que utiliza linux como sistema operativo se pueden configurar y programar desde el espacio de usuario a través de archivos dinámicos localizados en el Sistema de Jerarquía de (FHS, Filesystem Hierarchy Standard) de linux, específicamente en /dev/* y /sys/*
+
+		ls -l /dev/tty
+
+	Estos archivos tienen comunicación con los "device drivers" que tienen acceso directo a cada periférico del sistema desde el espacio de kernel. Se pueden manipular usando:
+		Programación de Shell : gpios
+		Usando lenguaje C y FHS : UART
+		Usando lenguaje C y librerías (wiringPi en Raspberry Pi) : IIC
+		Usando lenguajes de scripting	
+	
+Tiempo Real: Lograr procesar las muestras en tu aplicación (algoritmos), antes de que llegue el siguiente bloque de muestras
+
+Programación a bajo nivel
+	Mapa de memoria
+		En los sitemas basados en microprocesador se tiene un mapa de memoria
+		El mapa de memoria se define como todo el espacio o rango de direcciones que puede generar un microprocesador
+	Sistema de E/S
+		Es la región donde están mapeados los periféricos del sistema (Timer, UART,...), permite la comunicación entre el procesador y estos
+		Puerto: Cada dirección dentro del espacio de E/S
+
+VIDEO: 19/04/2021 0-25MIN
+MAPAS
+	MAPAS AISLADOS
+		Para el acceso al mapa de memoria de periféricos se usan las
+	MAPAS MAPEADOS
+Los microprocesadores ARM tienen E/S Mapeada
+
+MMU (UNIDAD DE ADMINISTRACIÓN DE MEMORIA)
+	Es una unidad de hardware cuya función principal es realizar la traducción de direcciones de memoria virtual (Kernel Space) a direcciones físicas (RAM) (Al tener solo un mapa de memoria).
+	
+	Función MMAP
+		Es una función que crea una nueva asignación en el espacio de direcciones virtuales
+*CODIGO DE EJEMPLO*
+		La dirección de inicio de los periféricos dse pueden obtener de /proc/iomen
+
+	Microcontrolador
+		Cada pin esta compartido con varios perifericos
+
+Operación Lógica : Función : Máscara : Descripción
+OR : Encender bits : | : 1, posiciones de bits a encender - 0, posiciones de bits que no debe modificar
+AND : Apagar bits : & : 0, posiciones de bits a apagar - 1, posiciones de bits que no debe modificar
+XOR : Complementar bits : ^ : 1, posiciones de los bits a complementar - 0, posiciones de bits que no debe modificar
+NOT : Negar bits : ~ : 
+Corrimiento a la izq : << : Recorrer bits
+Corrimiento a la der : >> : Recorrer bits
+
+´
+MEMORIA MICRO SD 16GB clase 10 - SDHC / SDXC - BUS MARK -> I <-
+U3U
+clase 10, escritura 10 mb's
+ADAPTADOR PARA CONECTAR LA MEMORIA MICROSC A LA PC
+Descarga la imagen de RaspiOS
+
+sudo dd bs=4M if=
+
+Eliminadr de 5V a 2.5A microUSB
+CABLE HDMI
+Sistema Operativo Linux
+Teclado y Mouse
+
+Compilación Cruzada
+	Compilar en una computadora con su respectiva arquitectura y pasar el archivo compilado al otro computador listo para correr
+
+nano /proc/ionem
+
+En Linux
+	cd linux
+	make menuconfig
+		--Kernel Configuration, para cosas muy específicas
+	lscpu
+
+En Raspberry
+	uname -r
+		--Versión del Kernel
+
+E/S en espacio de Kernel
+	Cada periférico es controlado mediante la lectura y escritura de sus registros
+	
+	El kernel proporciona una interfaz de registro que permite a un device driver utilizar los puertos que necesita. La macro usada para la asignación es:
+<linux/ioport.h>
+#define request_region(start, n, name)		__request_region(&ioport_resource, (start), n, (name) 0)
+
+	Todas las direcciones se encuentran en el archivo:
+/proc/ioports
+	E/S mapeado de los perifericos que tienen una dirección en el mapa de la memoria virtual, se encuentra en el archivo:
+/proc/iomen
+
+	Después de usar las direcciones virtuales hay que liberarlas
+<asm/io.h>
+	extern void iouman(const void __iomen *addr); //Liberar
+	__iomen *ioremap(phys)
+
+"volatile": Se usa a las direcciones de memoria, para que cuando se haga alguna asignación de dirección de memoria con decimales o bits, no los tomes como constantes
+
+Modificacipon del parámetro
+	Macro module_param_cb
+		name: Es el nombre de la variable global usada como parámetro
+		ops: Es la dirección de la estructura kernel_param_ops
+		arg: Argumentos para las operaciones
+		perm: Permisos del archivo ubidado en sysfs
+
+Funciones set y get
+La función "set" regresa un entero. Ese entero indica el éxito de la ejecución de la función (cero) o el tipo de error.
+	El primer parámetro es un apuntador constante de tipo "char" llamado "val". Ese apuntador tiene el valor que se esta enviando desde sysfs...
+
+La funcióon "get regresa un entero. Ese entero indica la LONGITUD de la cadena que se encuentra en el parámetro "buffer". La longitud indica la cantidad de caracteres a devolver del buffer.
+	El primer parametro..
+
+Estructura kernel_param
+{
+	const char *name;
+	struct module *mod;
+	const struct kernel_param_ops *ops;
+	const u16 perm;
+	s8 level;
+	s8 flags;
+	union {
+		void *arg;
+		const struct kparam_string
+		const struct 
+	};
+}
+
+Funciones de ayuda (helper funciones)
+	param_set_int()
+	param_get_int(buffer, kp) //Convierte el kernel param a entero y lo copia en buffer
+
+Los device drivers tienen un papel especial en el kernel de Linux. Cada uno es una "caja negra" que hacen que una pieza de hardware particular responda a una interfaz de programación interna bien definida; ocultan completamente los detalles de cómo funciona el dispositivo.
+
+Las actividades del usuario se realizan mediante un conjunto de llamadas estandarizadas (llamadas al sistema: read, write, open y close; funciones call back) que son independientes del driver específico; asignar esas llamadas a operaciones específicas del dispositivo que actúan en hardware real es, entonces, la función del device driver.
+
+Esta interfaz de programación es tal que los device drivers pueden construirse por separado del resto del kernel e "insertarse" en tiempo de ejecución cuando sea necesario. Esta modularidad hace que los drivers de Linux sean fáciles de escirbir, hasta el punto que ahora hay cientos de ellos disponibles.
+
+Hay varias razones para estar interesado en la escritura de device driverss para Linux. La velocidad a la que el nuevo hardware está disponible (y obsoleto). Solo garantiza que los desarrolladores de drivers estarán ocupados en el futuro previsible; es decir desarrollando drivers para todo el hardware nuevo.
+
+Es posible que las persionas necesiten conocer los drivers para poder acceder a un dispositivo en particular que les interese.
+
+Los proveedores de hardware, al poner a disposición un driver de Linux para sus productos, pueden agregar la gran y creciente base de usuarios de Linux a sus mercados potenciales.
+
+Y la naturaleza de código abierto del sistema Linux significa que si el desarrollador del driver lo desea, el código fuente de un driver se puede difundir rápidamente a millones de usuarios.
+
+En un sistema Unix, varios procesos concurrentes atienden diferentes tareas. Cada proceso solicita recursos del sistema, ya sea cálculo intenso, memoria, conectividad de red o algún otro recurso. El kernel es la gran parte del código ejecutable.
+	Administrador de procesos
+	Sistema de archivos
+	Control de dispositivos
+		Device Driver
+			El kernel debe tener incorporado un device driver para cada periférico presente en un sistema embebido, los cuales van desde el UART, IIC, SPI entre otros
+	Redes
+
+Clases de dispositivos y módulos
+	La forma en que Linux mira los dispositivos entre tres tipos fundamentales de dispositivos.
+	Cada módulo generalmente implementa uno de estos tipos y, por lo tanto, se pueden clasificar como:
+		Módulo de character
+		Módulo de bloque
+		Módulo de red
+		Otros módulos
+
+	Dispositivos de caracter
+		Es aquel que se puede acceder como una secuencia de bytes (como un archivo); un driver se encarga de implementar este comportamiento.
+		Este driver generalmente implementa las llamadas al sistema de open, close, read y write mediante funciones call back.
+		La consola de texto (/dev/console) y los puertos seriales (/dev/ttyS0 y amigos) son ejemplos de dispositivos de caracter, ya que están bien representados por la abstracción de flujo.
+			
+			En linux al ejecutar el comando
+				"ls -l /dev/"
+				Todos los que contenga "c" en la primer columna de descripción de permisos significa que es un device driver de carácter
+
+				Todos los que contenga "d" en la primer columna de descripción de permisos significa que es directorio
+
+				Todos los que contenga "b" en la primer columna de descripciónd de permisos significa que es un device driver de bloque
+
+	Dispositivos de Bloque
+		Como los dispositivos de caracter, los nodos del sistema de archivos acceden a los dispositivos de bloque en el directorio /dev.
+		En la mayoría de los sistemas Unix, un dispositivo de bloque solo puede manejar operaciones de E/S que transfieren uno o más bloques completos, que generalmente tienen una longitud de 512 bytes (o una potencia mayor de dos).
+		Linux, en cambio, permite que la aplicación lea y escriba un dispositivo de bloque como un dispositivo de carácter; permite la transferencia de cualquier número de bytes a la vez.
+	
+	Dispositivos de red (No cuenta el Bluetooh, ese se crea como device driver de caracter)
+		Cualquier transacción de red se realiza a tra´ves de una interfaz, es decir, un dispotivo que puede intercambiar datos con otros hosts.
+		Por lo general, una interfaz es un dispositivo de hardware, pero también podría ser un dispositivo de software puro, como la interfaz de loop back.
+
+DEVICE DRIVERS con Números mayores y menores
+	Los dispositivos de carácter sn accesados a través de nombres en el sistema de archivos, esos nombres se denominan archivos especiales o archivos de dispositivo o simplemente nodos del árbol del sistema de archivos; están ubicados en...
+
+	En linux al ejecutar el comando
+		"ls -l /dev/"
+		El número mayor (izquierdo) significa si usan un driver similar y el número menor (derecho) es el qué los distingue en el mismo grupo. (Están antes de la fecha "may", en medio)
+
+	Tradicionalmente el número mayor identifica el drivere asociado con el dispositivos
+		En linux al ejecutar el comando
+			"cat /proc/devices"
+			"ls -l /dev/sd*"
+			"ls -l /dev/tty*"
+	El kernel utiliza el número menor para determinar exactamente que driver es
+	El número mayor y menor se asignan:
+		De manera estática
+			se tiene una estructura dev_t, definida en <linux/types.h>
+				La estructura es una cantidad de 32 bits con 12 bits MSB reservados para el número mayor y 20 bits LSB para el número menor, para acceder se usan las macros definidas en <linux/kdev_t.h>
+			Si se quiere inicializar la estructura dev_t, con el número mayor y menor del device driver se usa la macro:
+				MKDEV(int major, int minor)
+			Para obtener el número mayor y menor de la estructura dev_t se usan las macros:
+				MAJOR(dev_t dev);
+				MINOR(dev_t dev)
+			La asignación estática se usa para establecer un número mayor particular en un device driver
+			Este método asignará ese número principal si la función está disponible. De lo contrario no lo hará
+				int register_chrdev_region(dev_t first, unsigned count, const name)
+		De manera dinámica
+
+
+Creación manual del archivo de dispositivo
+mknod -m <permissions> <name> <device type> <major> <minor>
+	permissions: 660
+	device type: "c" : carácter, "b" : bloque
+
+operaciones de archivo
+	La mayoria de las operaciones fundamentales de un driver involucran tres estructuras importantes de datos del kernel
+
+	La estructura de file_operations define las operaciones que el device driver debe manejar, se encuentra en <linux/fs.h>
+		Estructura file_operations: open, read, write, release (cerrar/liberar estructura)
+
+	Los device driver de carácter pueden enviar y recibir información:
+		Desde espacio de usuario, usando el archivo de dispositivo definido en /dev
+		Desde espacio de kernel, usando las operaciones de archivos definidas en el módulo de kernel
+		
+		Lo primero que se hace es reservar un buffer estática o dinámicamente; kmalloc es una función usada para reservar memoria de manera dinámica en espacio de kernel (<linux/slab.h>), se suele usar en la opción que se ejecuta que es "driver_open"
+		Para liberar memoria de kmalloc, se usa kfree (<linux/slab.h>), se suele usar en la opción que se ejecuta que es "driver_release"
+
+		Para copiar un bloque de datos desde espacio de usuario a espacio de kernel, se usa la función "copy_from_user", definida en <linux/uaccess.h 

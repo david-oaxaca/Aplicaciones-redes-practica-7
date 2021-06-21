@@ -131,21 +131,26 @@ public class Main {
                     RandomAccessFile raf = new RandomAccessFile(new File(ruta, fileName), "rw");
                     raf.setLength(allFiles.get(opc_sel).getTam());
                     int bloque = (int) (allFiles.get(opc_sel).getTam() / indices.size()); //Calculamos cuanto va a descargar cada hilo
-
+                    //System.out.println(allFiles.get(opc_sel).getTam());
                     for (int i = 0; i < indices.size(); i++) {
                         int inicio = i*bloque;
                         int termino = (i+1)*bloque - 1;
+                        
                         if(i == (indices.size() - 1)){
                             termino = (int) (allFiles.get(opc_sel).getTam() - 1);
                         }
 
                         //Inicializamos hilos de Client_Flujo
+                        
                         int puerto = Integer.parseInt(nodos_encontrados.get(indices.get(i)).getPuerto_Flujo());
+                        //
                         new Client_Flujo(raf, direcciones.get(i), puerto, inicio, termino).start();
+                        
                     }
 
                     Thread.sleep(1000);
                     raf.close();
+                    allFiles.clear();
                 }
                 
             }else{

@@ -40,6 +40,7 @@ public class Client_Flujo extends Thread{
         //System.out.println((-1*(inicio-termino)));
         
         try {
+            
             Socket cl = new Socket("localhost", puerto);
             BufferedOutputStream bos = new BufferedOutputStream(cl.getOutputStream());
             DataOutputStream dos = new DataOutputStream(bos);
@@ -54,10 +55,13 @@ public class Client_Flujo extends Thread{
             dos.flush();
             
             DataInputStream dis = new DataInputStream(cl.getInputStream());
-            byte[] bytes = new byte[(-1*(inicio - termino))];
-            dis.readFully(bytes, 0, (-1*(inicio - termino)));
+            byte[] bytes = new byte[(termino - inicio)];
             
-            this.archivo.write(bytes, inicio, (-1*(inicio - termino)));
+            
+            dis.readFully(bytes, 0, (termino - inicio));
+            
+            this.archivo.seek(inicio);
+            this.archivo.write(bytes, 0, (termino - inicio));
             
             //System.out.println("Parte del archivo descargada desde "+this.puerto+"...");
             
@@ -66,6 +70,7 @@ public class Client_Flujo extends Thread{
             dis.close();
             
         } catch (IOException ex) {
+            ex.printStackTrace();
             Logger.getLogger(Client_Flujo.class.getName()).log(Level.SEVERE, null, ex);
         }
         
