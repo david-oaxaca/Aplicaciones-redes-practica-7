@@ -34,6 +34,7 @@ public class ClienteNodos extends Thread{
         this.RMI_RESGISTRY_PORT = rmi;
     }
     
+    @Override
     public void run(){
         try{
             //cl = new MulticastSocket(7779);

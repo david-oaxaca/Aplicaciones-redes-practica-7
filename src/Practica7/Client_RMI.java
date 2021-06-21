@@ -31,6 +31,7 @@ public class Client_RMI extends Thread{
         this.Lista = Lista_prev;
     }
     
+    @Override
     public void run(){
     
         String host = "127.0.0.1";

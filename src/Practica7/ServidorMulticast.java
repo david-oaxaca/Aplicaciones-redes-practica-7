@@ -36,6 +36,7 @@ public class ServidorMulticast extends Thread{
         this.ss = socket;
     }
     
+    @Override
     public void run(){
         try {
             InetAddress gpo = InetAddress.getByName("229.1.2.3");

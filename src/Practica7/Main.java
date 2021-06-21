@@ -5,7 +5,9 @@
  */
 package Practica7;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.net.MulticastSocket;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -31,20 +33,25 @@ public class Main {
     }
     
     public static void main(String main[]) throws IOException, InterruptedException{
-        
+        //Inicialización de puertos
         Scanner sc = new Scanner(System.in);
         int rmi_envio = puertosDisponibles(1999, 4000);
-        int flujo_envio = puertosDisponibles(7778, 1000);
+        int flujo_envio = puertosDisponibles(7778, 10000);
         String uniqueID = UUID.randomUUID().toString();
         
-        ArrayList <Nodo> nodos_encontrados = new ArrayList();
-        
-        ArrayList <Lista_elem> allFiles = new ArrayList();
-        
+        //Inicialización del socket
         MulticastSocket socket;
         socket = new MulticastSocket(7777);
         socket.setReuseAddress(true);
         socket.setTimeToLive(255);
+        
+        //Inicialización de listas para busqueda de archivos
+        ArrayList <Nodo> nodos_encontrados = new ArrayList();
+        ArrayList <Lista_elem> allFiles = new ArrayList();
+        
+        //Creación/Verificación de carpeta para descargas
+        Archivos creaArchivos = new Archivos();
+        File ruta = creaArchivos.crearArchivo(new File("").getAbsolutePath(), "\\Downloads");
         
         //Inicialización de hilos para anuncio de puertos y descubrimiento de nodos
         System.out.println("ID de sesion: " + uniqueID);
@@ -83,9 +90,52 @@ public class Main {
         
         for (int i = 0; i < allFiles.size(); i++) {
             System.out.println("Archivo " + i + " :");
-            System.out.println("\t" + allFiles.get(i).getArchivo());
-            System.out.println("\t" + allFiles.get(i).getHash());
+            System.out.println("\tNombre: " + allFiles.get(i).getArchivo());
+            System.out.println("\tHash: " + allFiles.get(i).getHash());
+            System.out.println("\tTamaño: " + allFiles.get(i).getTam());
         }
+        
+        
+        //Conseguimos los indices de los nodos donde el archivo coincida
+        System.out.print("\nEscriba el numero del archivo que quiere descargar: ");
+        int opc_sel = sc.nextInt();
+        ArrayList <Integer> indices = new ArrayList();
+        ArrayList <String> direcciones = new ArrayList();
+        for (int i = 0; i < respuestas.size(); i++) {
+            ListaResponse lista = respuestas.get(i);
+            for (int j = 0; j < lista.getArchivos().size(); j++) {
+                Lista_elem elemento = lista.getArchivos().get(j);
+                if(allFiles.get(opc_sel).getHash().equals(elemento.getHash())){
+                    indices.add(i);
+                    direcciones.add(elemento.getArchivo());
+                    break;
+                }
+            }
+        }
+        
+        //Empezamos con el procedimiento para descargar el archivo por partes
+        System.out.println("\nLa descarga se dividira en " + indices.size() + " servidores");
+        String fileName = allFiles.get(opc_sel).getArchivo();
+        String [] fileParts = fileName.split("\\\\");
+        fileName = fileParts[fileParts.length - 1];
+        
+        //System.out.println(fileName);
+        
+        RandomAccessFile raf = new RandomAccessFile(new File(ruta, fileName), "rw");
+        raf.setLength(allFiles.get(opc_sel).getTam());
+        int bloque = (int) (allFiles.get(opc_sel).getTam() / indices.size()); //Calculamos cuanto va a descargar cada hilo
+        
+        for (int i = 0; i < indices.size(); i++) {
+            int inicio = i*bloque;
+            int termino = (i+1)*bloque - 1;
+            if(i == (indices.size() - 1)){
+                termino = (int) (allFiles.get(opc_sel).getTam() - 1);
+            }
+            //Inicializamos hilos de Client_Flujo
+            int puerto = Integer.parseInt(nodos_encontrados.get(indices.get(i)).getPuerto_Flujo());
+            new Client_Flujo(raf, direcciones.get(indices.get(i)), puerto, inicio, termino).start();
+        }
+        
         
     }
 }

@@ -79,6 +79,7 @@ public class Server_RMI extends Thread implements ListasArchivos{
                 Lista_elem archivo_encontrado = new Lista_elem();
                 archivo_encontrado.setArchivo(coincidente.getAbsolutePath());
                 archivo_encontrado.setHash(getHash(coincidente, md5Digest));
+                archivo_encontrado.setTam(coincidente.length());
                 encontrados.add(archivo_encontrado);
             }
         } catch (NoSuchAlgorithmException ex) {
@@ -90,6 +91,7 @@ public class Server_RMI extends Thread implements ListasArchivos{
         return encontrados;
     }
     
+    @Override
     public void run(){
         
         try {
