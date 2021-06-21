@@ -59,7 +59,11 @@ public class Client_Flujo extends Thread{
             
             this.archivo.write(bytes, inicio, (-1*(inicio - termino)));
             
-            System.out.println("Parte del archivo descargada...");
+            System.out.println("Parte del archivo descargada desde "+this.puerto+"...");
+            
+            dos.close();
+            bos.close();
+            dis.close();
             
         } catch (IOException ex) {
             Logger.getLogger(Client_Flujo.class.getName()).log(Level.SEVERE, null, ex);

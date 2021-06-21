@@ -8,6 +8,7 @@ package Practica7;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import static java.lang.System.exit;
 import java.net.MulticastSocket;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -71,74 +72,82 @@ public class Main {
         //Directorio: Archivos
         //Archivo: temp
         
-        System.out.println("Escriba el nombre del archivo que desea buscar entre los servidores: ");
-        String archivo = sc.nextLine();
+        String archivo = "";
         
-        ArrayList <ListaResponse> respuestas = new ArrayList();
+        while(!archivo.equalsIgnoreCase("salir")){
+            System.out.println("Escriba el nombre del archivo que desea buscar entre los servidores: ");
+            archivo = sc.nextLine();
+            if(!archivo.equalsIgnoreCase("salir")){
+                ArrayList <ListaResponse> respuestas = new ArrayList();
         
-        for (Nodo encontrado : nodos_encontrados) {
-            ArrayList <Lista_elem> respuesta = new ArrayList();
-            new Client_RMI(archivo, Integer.parseInt(encontrado.getPuerto_RMI()), respuesta).start();
-            respuestas.add(new ListaResponse(respuesta));
-        }
-        
-        Thread.sleep(1000);
-        for (ListaResponse respuesta : respuestas) {
-            allFiles.addAll(respuesta.getArchivos());
-        }
-        
-        System.out.println("Se encontraron " + allFiles.size() + " archivos que coinciden con ese nombre");
-        
-        for (int i = 0; i < allFiles.size(); i++) {
-            System.out.println("Archivo " + i + " :");
-            System.out.println("\tNombre: " + allFiles.get(i).getArchivo());
-            System.out.println("\tHash: " + allFiles.get(i).getHash());
-            System.out.println("\tTamaño: " + allFiles.get(i).getTam());
-        }
-        
-        
-        //Conseguimos los indices de los nodos donde el archivo coincida
-        System.out.print("\nEscriba el numero del archivo que quiere descargar: ");
-        int opc_sel = sc.nextInt();
-        ArrayList <Integer> indices = new ArrayList();
-        ArrayList <String> direcciones = new ArrayList();
-        for (int i = 0; i < respuestas.size(); i++) {
-            ListaResponse lista = respuestas.get(i);
-            for (int j = 0; j < lista.getArchivos().size(); j++) {
-                Lista_elem elemento = lista.getArchivos().get(j);
-                if(allFiles.get(opc_sel).getHash().equals(elemento.getHash())){
-                    indices.add(i);
-                    direcciones.add(elemento.getArchivo());
-                    break;
+                for (Nodo encontrado : nodos_encontrados) {
+                    ArrayList <Lista_elem> respuesta = new ArrayList();
+                    new Client_RMI(archivo, Integer.parseInt(encontrado.getPuerto_RMI()), respuesta).start();
+                    respuestas.add(new ListaResponse(respuesta));
                 }
-            }
+
+                Thread.sleep(1000);
+                for (ListaResponse respuesta : respuestas) {
+                    allFiles.addAll(respuesta.getArchivos());
+                }
+
+                System.out.println("Se encontraron " + allFiles.size() + " archivos que coinciden con ese nombre");
+
+                for (int i = 0; i < allFiles.size(); i++) {
+                    System.out.println("Archivo " + i + " :");
+                    System.out.println("\tNombre: " + allFiles.get(i).getArchivo());
+                    System.out.println("\tHash: " + allFiles.get(i).getHash());
+                    System.out.println("\tTamaño: " + allFiles.get(i).getTam());
+                }
+
+
+                //Conseguimos los indices de los nodos donde el archivo coincida
+                System.out.print("\nEscriba el numero del archivo que quiere descargar: ");
+                int opc_sel = sc.nextInt();
+                ArrayList <Integer> indices = new ArrayList();
+                ArrayList <String> direcciones = new ArrayList();
+                for (int i = 0; i < respuestas.size(); i++) {
+                    ListaResponse lista = respuestas.get(i);
+                    for (int j = 0; j < lista.getArchivos().size(); j++) {
+                        Lista_elem elemento = lista.getArchivos().get(j);
+                        if(allFiles.get(opc_sel).getHash().equals(elemento.getHash())){
+                            indices.add(i);
+                            direcciones.add(elemento.getArchivo());
+                            break;
+                        }
+                    }
+                }
+
+                //Empezamos con el procedimiento para descargar el archivo por partes
+                System.out.println("\nLa descarga se dividira en " + indices.size() + " servidores");
+                String fileName = allFiles.get(opc_sel).getArchivo();
+                String [] fileParts = fileName.split("\\\\");
+                fileName = fileParts[fileParts.length - 1];
+
+                //System.out.println(fileName);
+
+                RandomAccessFile raf = new RandomAccessFile(new File(ruta, fileName), "rw");
+                raf.setLength(allFiles.get(opc_sel).getTam());
+                int bloque = (int) (allFiles.get(opc_sel).getTam() / indices.size()); //Calculamos cuanto va a descargar cada hilo
+
+                for (int i = 0; i < indices.size(); i++) {
+                    int inicio = i*bloque;
+                    int termino = (i+1)*bloque - 1;
+                    if(i == (indices.size() - 1)){
+                        termino = (int) (allFiles.get(opc_sel).getTam() - 1);
+                    }
+
+                    //Inicializamos hilos de Client_Flujo
+                    int puerto = Integer.parseInt(nodos_encontrados.get(indices.get(i)).getPuerto_Flujo());
+                    new Client_Flujo(raf, direcciones.get(indices.get(i)), puerto, inicio, termino).start();
+                }
+
+                Thread.sleep(1000);
+                raf.close();
+            }else{
+                exit(0);
+            }   
         }
-        
-        //Empezamos con el procedimiento para descargar el archivo por partes
-        System.out.println("\nLa descarga se dividira en " + indices.size() + " servidores");
-        String fileName = allFiles.get(opc_sel).getArchivo();
-        String [] fileParts = fileName.split("\\\\");
-        fileName = fileParts[fileParts.length - 1];
-        
-        //System.out.println(fileName);
-        
-        RandomAccessFile raf = new RandomAccessFile(new File(ruta, fileName), "rw");
-        raf.setLength(allFiles.get(opc_sel).getTam());
-        int bloque = (int) (allFiles.get(opc_sel).getTam() / indices.size()); //Calculamos cuanto va a descargar cada hilo
-        
-        for (int i = 0; i < indices.size(); i++) {
-            int inicio = i*bloque;
-            int termino = (i+1)*bloque - 1;
-            if(i == (indices.size() - 1)){
-                termino = (int) (allFiles.get(opc_sel).getTam() - 1);
-            }
-            
-            //Inicializamos hilos de Client_Flujo
-            int puerto = Integer.parseInt(nodos_encontrados.get(indices.get(i)).getPuerto_Flujo());
-            new Client_Flujo(raf, direcciones.get(indices.get(i)), puerto, inicio, termino).start();
-        }
-        
-        
     }
 }
 

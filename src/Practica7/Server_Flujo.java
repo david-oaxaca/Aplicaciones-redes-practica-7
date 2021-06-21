@@ -60,6 +60,10 @@ public class Server_Flujo extends Thread{
                 
                 dos.write(bytes);
                 
+                dis.close();
+                bis.close();
+                dos.close();
+                raf.close();
             }
             
         } catch (IOException ex) {
