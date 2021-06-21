@@ -106,7 +106,7 @@ public class Server_RMI extends Thread implements ListasArchivos{
         try{
             System.setProperty("java.rmi.server.codebase","http://8.25.100.18/clases/"); ///file:///f:\\redes2\\RMI\\RMI2
 	    Server_RMI obj = new Server_RMI();
-	    ListasArchivos stub = (ListasArchivos) UnicastRemoteObject.exportObject((Remote) obj, 0);
+	    ListasArchivos stub = (ListasArchivos) UnicastRemoteObject.exportObject((Remote) this, 0);
             
 	    // Bind the remote object's stub in the registry
 	    Registry registry = LocateRegistry.getRegistry(this.Puerto);
