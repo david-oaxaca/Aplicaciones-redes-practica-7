@@ -52,11 +52,15 @@ public class Server_Flujo extends Thread{
                 int inicio = dis.readInt();
                 int termino = dis.readInt();
                 
+                System.out.println("Inicio:" + inicio);
+                System.out.println("Termino:" + termino);
+                
                 DataOutputStream dos = new DataOutputStream(sc.getOutputStream());
                 
                 RandomAccessFile raf = new RandomAccessFile(new File(dir), "rw");
                 byte[] bytes = new byte[(-1*(inicio-termino))];
-                raf.readFully(bytes, inicio, (-1*(inicio-termino)));
+                raf.seek((long) inicio);
+                raf.readFully(bytes, 0, (termino-inicio));
                 
                 dos.write(bytes);
                 

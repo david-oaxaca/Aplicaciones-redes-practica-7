@@ -142,10 +142,14 @@ public class Main {
                         //Inicializamos hilos de Client_Flujo
                         int puerto = Integer.parseInt(nodos_encontrados.get(indices.get(i)).getPuerto_Flujo());
                         new Client_Flujo(raf, direcciones.get(i), puerto, inicio, termino).start();
+                        
                     }
 
                     Thread.sleep(1000);
                     raf.close();
+                    allFiles.clear();
+                    System.out.println("\n*******************************************************************\n");
+                    
                 }
                 
             }else{
