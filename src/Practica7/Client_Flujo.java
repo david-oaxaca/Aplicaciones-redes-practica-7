@@ -16,7 +16,8 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author tdwda
+ * @author David Arturo Oaxaca Pérez
+ * @author David Madrigal Buendia
  */
 public class Client_Flujo extends Thread{
     private int puerto;

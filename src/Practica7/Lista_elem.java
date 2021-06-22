@@ -10,7 +10,8 @@ import java.util.ArrayList;
 
 /**
  *
- * @author tdwda
+ * @author David Arturo Oaxaca Pérez
+ * @author David Madrigal Buendia
  */
 public class Lista_elem implements Serializable{
     

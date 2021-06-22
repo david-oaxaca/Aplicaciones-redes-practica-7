@@ -9,7 +9,8 @@ import java.io.File;
 
 /**
  *
- * @author tdwda
+ * @author David Arturo Oaxaca Pérez
+ * @author David Madrigal Buendia
  */
 public class Archivos {
     

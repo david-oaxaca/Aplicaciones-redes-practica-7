@@ -7,7 +7,8 @@ package Practica7;
 
 /**
  *
- * @author tdwda
+ * @author David Arturo Oaxaca Pérez
+ * @author David Madrigal Buendia
  */
 public class Nodo {
     private String puerto_RMI;

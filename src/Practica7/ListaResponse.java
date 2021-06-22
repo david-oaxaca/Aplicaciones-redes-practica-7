@@ -9,7 +9,8 @@ import java.util.ArrayList;
 
 /**
  *
- * @author tdwda
+ * @author David Arturo Oaxaca Pérez
+ * @author David Madrigal Buendia
  */
 public class ListaResponse {
     private ArrayList <Lista_elem> archivos;

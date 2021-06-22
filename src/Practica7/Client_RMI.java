@@ -11,7 +11,8 @@ import java.util.ArrayList;
 
 /**
  *
- * @author tdwda
+ * @author David Arturo Oaxaca Pérez
+ * @author David Madrigal Buendia
  */
 public class Client_RMI extends Thread{
     private String File_name;

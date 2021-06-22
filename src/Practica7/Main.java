@@ -18,7 +18,8 @@ import java.util.UUID;
 
 /**
  *
- * @author tdwda
+ * @author David Arturo Oaxaca Pérez
+ * @author David Madrigal Buendia
  */
 public class Main {
     

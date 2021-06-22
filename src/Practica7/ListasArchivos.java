@@ -11,7 +11,8 @@ import java.util.ArrayList;
 
 /**
  *
- * @author tdwda
+ * @author David Arturo Oaxaca Pérez
+ * @author David Madrigal Buendia
  */
 public interface ListasArchivos extends Remote{
     ArrayList <Lista_elem> busqueda(String archivo) throws RemoteException;

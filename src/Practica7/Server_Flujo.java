@@ -23,7 +23,8 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author tdwda
+ * @author David Arturo Oaxaca Pérez
+ * @author David Madrigal Buendia
  */
 public class Server_Flujo extends Thread{
     
